@@ -1,0 +1,75 @@
+.swapform__wrapper {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  background-color: rgba($color: aliceblue, $alpha: 0.8);
+  padding: 40px 30px;
+  border-radius: 20px;
+  height: 500px;
+  width: 700px;
+
+  .form__container {
+    width: 100%;
+    height: 100%;
+    margin-bottom: 30px;
+
+    .col-5, .col-2 {
+      padding: 0;
+    }
+  }
+
+  .token-container {
+    padding: 15px 20px;
+    border-radius: 20px;
+    height: 100%;
+    border: 1px solid gray;
+  }
+
+  .token-select, .token-value {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    height: 50%;
+
+    .upper {
+      font-weight: 600;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+  }
+
+  .token-select {
+    border-bottom: 1px solid gray;
+  }
+}
+
+.arrow-icon {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 40px;
+  color: white;
+}
+
+.swap-button {
+  border: none;
+  padding: 10px 40px;
+  background-color: rgb(95, 48, 150) !important;
+  width: 30%;
+  transition: 0.2s;
+  border-radius: 4px;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+.fund, .rate {
+  padding: 0 15px;
+  width: 100%;
+}
+
+.rate {
+  margin-bottom: 30px;
+}
