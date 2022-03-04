@@ -34,6 +34,10 @@ module.exports = {
   solidity: {
     version: "0.8.9"
   },
+  paths: {
+    cache: "./client/cache",
+    artifacts: "./client/artifacts"
+  },
   etherscan: {
     // Your API key for Etherscan
     // Obtain one at https://etherscan.io/
