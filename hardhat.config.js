@@ -1,5 +1,6 @@
 require("@nomiclabs/hardhat-waffle");
 require("@nomiclabs/hardhat-etherscan");
+require('@openzeppelin/hardhat-upgrades');
 require('dotenv').config();
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;

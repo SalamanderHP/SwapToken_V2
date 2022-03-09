@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import "./style.scss";
 
 const contractAddress = {
-  swapToken: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707"
+  swapToken: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
 }
 
 let provider = new ethers.providers.Web3Provider(window.ethereum);
