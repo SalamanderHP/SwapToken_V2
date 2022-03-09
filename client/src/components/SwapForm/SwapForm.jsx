@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from 'ethers';
+import { parseUnits, parseEther } from "ethers/lib/utils";
 import TokenArtifact from "../../artifacts/contracts/Token.sol/Token.json";
 import SwapTokenArtifact from "../../artifacts/contracts/SwapToken.sol/SwapToken.json";
 import "./style.scss"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleArrowRight } from '@fortawesome/free-solid-svg-icons';
+import { tokenAAddress, tokenBAddress, swapTokenAddress } from '../../contract-address';
 
 const contractAddress = {
   nativeToken: "0x0000000000000000000000000000000000000000",
-  tokenA: "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707",
-  tokenB: "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-  swapToken: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
+  tokenA: tokenAAddress,
+  tokenB: tokenBAddress,
+  swapToken: swapTokenAddress
 }
 
 let provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -43,6 +45,7 @@ const SwapForm = () => {
     SwapTokenArtifact.abi,
     provider.getSigner(0)
   );
+  let tokenInInstance, tokenOutInstance;
 
   useEffect(async () => {
     const connectWallet = async () => {
@@ -188,8 +191,7 @@ const SwapForm = () => {
 
   const handleInputChange = (e) => {
     let value = e.target.value;
-    let tokenAmount = value * (10 ** tokenIn.decimals);
-    setTokenAmount(tokenAmount);
+    setTokenAmount(value);
 
     let outAmount = value * rate.rate * 10 ** (0 - rate.decimals);
     setTokenOutAmount(outAmount);
@@ -206,9 +208,22 @@ const SwapForm = () => {
   const handleSubmit = async () => {
     console.log(`Token in: ${JSON.stringify(tokenIn)}`);
     console.log(`Token out: ${JSON.stringify(tokenOut)}`);
-    console.log(tokenAmount);
 
-    let swapToken = await tokenSwap.swap(tokenIn.address, tokenOut.address, tokenAmount.toString());
+    let swapToken;
+    if (tokenIn.address === contractAddress.nativeToken) {
+      swapToken = await tokenSwap.swap(tokenIn.address, tokenOut.address, 0, {value: parseUnits(tokenAmount, tokenIn.decimals)});
+    } else {
+      let token = new ethers.Contract(
+        tokenIn.address,
+        TokenArtifact.abi,
+        provider.getSigner(0)
+      );
+      await token.approve(
+        tokenSwap.address,
+        parseUnits(tokenAmount, tokenIn.decimals)
+      );
+      swapToken = await tokenSwap.swap(tokenIn.address, tokenOut.address, parseUnits(tokenAmount, tokenIn.decimals));
+    }
     console.log(swapToken);
     if (swapToken) {
       alert("Swap token success");
