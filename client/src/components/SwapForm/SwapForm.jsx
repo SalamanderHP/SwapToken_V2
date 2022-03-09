@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { ethers } from 'ethers';
-import { parseUnits, parseEther } from "ethers/lib/utils";
+import { parseUnits } from "ethers/lib/utils";
 import TokenArtifact from "../../artifacts/contracts/Token.sol/Token.json";
 import SwapTokenArtifact from "../../artifacts/contracts/SwapToken.sol/SwapToken.json";
 import "./style.scss"
@@ -45,7 +45,6 @@ const SwapForm = () => {
     SwapTokenArtifact.abi,
     provider.getSigner(0)
   );
-  let tokenInInstance, tokenOutInstance;
 
   useEffect(async () => {
     const connectWallet = async () => {

@@ -1,6 +1,6 @@
 import { ethers } from 'ethers';
 import SwapTokenArtifact from "../../artifacts/contracts/SwapToken.sol/SwapToken.json";
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { swapTokenAddress } from '../../contract-address';
 import "./style.scss";
 
@@ -11,22 +11,12 @@ const contractAddress = {
 let provider = new ethers.providers.Web3Provider(window.ethereum);
 
 const RateForm = () => {
-  const [address, setAddress] = useState("");
   const [rate, setRate] = useState({
     tokenIn: "",
     tokenOut: "",
     rate: 0,
     decimals: 0
   });
-
-  useEffect(async () => {
-    const connectWallet = async () => {
-      let userAddress = await window.ethereum.request({ method: 'eth_requestAccounts' });
-      setAddress(userAddress[0]);
-    }
-
-    await connectWallet();
-  })
 
   const tokenSwap = new ethers.Contract(
     contractAddress.swapToken,
