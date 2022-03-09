@@ -1,5 +1,6 @@
 import './App.scss';
 import Header from './components/Header/Header';
+import RateForm from './components/RateForm';
 import SwapForm from './components/SwapForm/SwapForm';
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
         <div className="body__wrapper">
           <h1>Token Swap</h1>
           <SwapForm />
+          <RateForm />
         </div>
         <div className="background__wrapper">
           <img className="background-img" alt="background-img" src="/background.jpg" />
