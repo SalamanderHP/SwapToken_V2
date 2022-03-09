@@ -1,10 +1,11 @@
 import { ethers } from 'ethers';
 import SwapTokenArtifact from "../../artifacts/contracts/SwapToken.sol/SwapToken.json";
 import React, { useState, useEffect } from "react";
+import { swapTokenAddress } from '../../contract-address';
 import "./style.scss";
 
 const contractAddress = {
-  swapToken: "0xa513E6E4b8f2a923D98304ec87F64353C4D5C853"
+  swapToken: swapTokenAddress
 }
 
 let provider = new ethers.providers.Web3Provider(window.ethereum);
