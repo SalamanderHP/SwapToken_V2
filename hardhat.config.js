@@ -24,7 +24,11 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 module.exports = {
   networks: {
     hardhat: {
-
+      chainId: 1337
+    },
+    localhost: {
+      url: "http://127.0.0.1:8545",
+      chainId: 1337
     },
     ropsten: {
       url: `https://eth-ropsten.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
@@ -35,8 +39,8 @@ module.exports = {
     version: "0.8.9"
   },
   paths: {
-    cache: "./client/cache",
-    artifacts: "./client/artifacts"
+    cache: "./client/src/cache",
+    artifacts: "./client/src/artifacts"
   },
   etherscan: {
     // Your API key for Etherscan

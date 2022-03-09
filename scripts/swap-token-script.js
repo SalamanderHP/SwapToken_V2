@@ -19,7 +19,7 @@ async function main() {
   await tokenA.deployed();
 
   const TokenB = await hre.ethers.getContractFactory("Token");
-  const tokenB = await TokenB.deploy("Token B", "TKB", 10000);
+  const tokenB = await TokenB.deploy("TokenB", "TKB", 10000);
   await tokenB.deployed();
 
   const SwapToken = await hre.ethers.getContractFactory("SwapToken");
