@@ -9,23 +9,11 @@ async function main() {
   const [deployer] = await ethers.getSigners();
   console.log("Deploying contracts with the account:", deployer.address);
 
-  // We get the contract to deploy
-  const TokenA = await ethers.getContractFactory("Token");
-  const tokenA = await TokenA.deploy("TokenA", "TKA", 10000);
-  await tokenA.deployed();
+  // Upgrading V2
+  const SwapTokenV2 = await ethers.getContractFactory("SwapTokenV2");
+  const swapTokenInstance = await upgrades.upgradeProxy("0xa513E6E4b8f2a923D98304ec87F64353C4D5C853", SwapTokenV2);
 
-  const TokenB = await ethers.getContractFactory("Token");
-  const tokenB = await TokenB.deploy("TokenB", "TKB", 10000);
-  await tokenB.deployed();
-
-  // Deploying V1
-  const SwapToken = await ethers.getContractFactory("SwapToken");
-  const swapTokenInstance = await upgrades.deployProxy(SwapToken, []);
-  await swapTokenInstance.deployed();
-
-  console.log("Token A deployed to: ", tokenA.address);
-  console.log("Token B deployed to: ", tokenB.address);
-  console.log("Swap Token deployed to: ", swapTokenInstance.address);
+  console.log("Swap Token V2 deployed to: ", swapTokenInstance.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

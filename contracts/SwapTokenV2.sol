@@ -5,7 +5,7 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 
-contract SwapToken is OwnableUpgradeable {
+contract SwapTokenV2 is OwnableUpgradeable {
   using SafeERC20Upgradeable for IERC20Upgradeable;
 
   struct Rate {
@@ -24,14 +24,14 @@ contract SwapToken is OwnableUpgradeable {
 
   receive() external payable {}
 
-  function changeRate(address _tokenIn, address _tokenOut, uint256 _exchangeRate, uint32 _exchangeRateDecimals) external onlyOwner {
-    require(_exchangeRate > 0, "The rate between token and crypto must be greater than 0");
+  // function changeRate(address _tokenIn, address _tokenOut, uint256 _exchangeRate, uint32 _exchangeRateDecimals) external onlyOwner {
+  //   require(_exchangeRate > 0, "The rate between token and crypto must be greater than 0");
 
-    tokenRate[_tokenIn][_tokenOut].rate = _exchangeRate;
-    tokenRate[_tokenIn][_tokenOut].decimals = _exchangeRateDecimals;
+  //   tokenRate[_tokenIn][_tokenOut].rate = _exchangeRate;
+  //   tokenRate[_tokenIn][_tokenOut].decimals = _exchangeRateDecimals;
 
-    emit RateChange(_tokenIn, _tokenOut, _exchangeRate, _exchangeRateDecimals);
-  }
+  //   emit RateChange(_tokenIn, _tokenOut, _exchangeRate, _exchangeRateDecimals);
+  // }
 
   function swap(address _tokenIn, address _tokenOut, uint256 _amountIn) external payable {
     require(_tokenIn != _tokenOut, "Cannot transfer 2 token with same address");
