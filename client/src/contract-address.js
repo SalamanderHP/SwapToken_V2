@@ -1,3 +1,3 @@
-export const tokenAAddress = "0x51A1ceB83B83F1985a81C295d1fF28Afef186E02";
-export const tokenBAddress = "0x36b58F5C1969B7b6591D752ea6F5486D069010AB";
-export const swapTokenAddress = "0x202CCe504e04bEd6fC0521238dDf04Bc9E8E15aB";
+export const tokenAAddress = "0x97Fb1326F45D9648C337A356407e0825578E8dF3";
+export const tokenBAddress = "0x6670fe4db03eD7CCFbA9C7bC7eb61f9131A207aE";
+export const swapTokenAddress = "0x33C3ee0E663d9b5632b4bCcF8c9cc340fe1FFF8D";
