@@ -39,6 +39,7 @@ const SwapForm = () => {
   });
   const [tokenAmount, setTokenAmount] = useState(0);
   const [tokenOutAmount, setTokenOutAmount] = useState(0);
+  const [contractBalance, setContractBalance] = useState(0);
 
   const tokenSwap = new ethers.Contract(
     contractAddress.swapToken,
@@ -76,6 +77,8 @@ const SwapForm = () => {
       let tokenName = await token.name();
       let tokenSymbol = await token.symbol();
 
+      let contractBalance = await token.balanceOf(contractAddress.swapToken);
+
       setTokenOut({
         address: contractAddress.tokenA,
         name: tokenName,
@@ -83,6 +86,7 @@ const SwapForm = () => {
         balance: tokenAmount / `1e${tokenDecimals}`,
         decimals: tokenDecimals
       });
+      setContractBalance(contractBalance / `1e${tokenDecimals}`);
     }
 
     if (window.ethereum === undefined) {
@@ -111,6 +115,8 @@ const SwapForm = () => {
 
     if (optionAddress === contractAddress.nativeToken) {
       let nativeBalance = (await provider.getBalance(address)).toString() / 1e18;
+      let contractBalance = (await provider.getBalance(contractAddress.swapToken)).toString() / 1e18;
+      setContractBalance(contractBalance);
       setTokenIn({
         address: optionAddress,
         name: "Ethereum",
@@ -133,6 +139,8 @@ const SwapForm = () => {
       let tokenName = await token.name();
       let tokenSymbol = await token.symbol();
 
+      let contractBalance = await token.balanceOf(contractAddress.swapToken);
+
       setTokenIn({
         address: optionAddress,
         name: tokenName,
@@ -140,6 +148,7 @@ const SwapForm = () => {
         balance: tokenAmount / `1e${tokenDecimals}`,
         decimals: tokenDecimals
       });
+      setContractBalance(contractBalance / `1e${tokenDecimals}`);
     }
 
     setTokenRate(optionAddress, tokenOut.address);
@@ -154,6 +163,8 @@ const SwapForm = () => {
 
     if (optionAddress === contractAddress.nativeToken) {
       let nativeBalance = (await provider.getBalance(address)).toString() / 1e18;
+      let contractBalance = (await provider.getBalance(contractAddress.swapToken)).toString() / 1e18;
+      setContractBalance(contractBalance);
       setTokenOut({
         address: optionAddress,
         name: "Ethereum",
@@ -171,6 +182,8 @@ const SwapForm = () => {
         provider.getSigner(0)
       );
 
+      let contractBalance = await token.balanceOf(contractAddress.swapToken);
+
       let tokenAmount = await token.balanceOf(address);
       let tokenDecimals = await token.decimals();
       let tokenName = await token.name();
@@ -183,6 +196,7 @@ const SwapForm = () => {
         balance: tokenAmount / `1e${tokenDecimals}`,
         decimals: tokenDecimals
       });
+      setContractBalance(contractBalance / `1e${tokenDecimals}`);
     }
 
     setTokenRate(tokenIn.address, optionAddress);
@@ -208,23 +222,26 @@ const SwapForm = () => {
     console.log(`Token in: ${JSON.stringify(tokenIn)}`);
     console.log(`Token out: ${JSON.stringify(tokenOut)}`);
 
-    let swapToken;
+    let swapToken, swapTx;
     if (tokenIn.address === contractAddress.nativeToken) {
       swapToken = await tokenSwap.swap(tokenIn.address, tokenOut.address, 0, {value: parseUnits(tokenAmount, tokenIn.decimals)});
+      swapTx = await swapToken.wait();
     } else {
       let token = new ethers.Contract(
         tokenIn.address,
         TokenArtifact.abi,
         provider.getSigner(0)
       );
-      await token.approve(
+      let approve = await token.approve(
         tokenSwap.address,
         parseUnits(tokenAmount, tokenIn.decimals)
       );
+      let tx = await approve.wait();
       swapToken = await tokenSwap.swap(tokenIn.address, tokenOut.address, parseUnits(tokenAmount, tokenIn.decimals));
+      swapTx = await swapToken.wait();
     }
-    console.log(swapToken);
-    if (swapToken) {
+    console.log(swapTx);
+    if (swapTx) {
       alert("Swap token success");
     }
   }
@@ -277,11 +294,16 @@ const SwapForm = () => {
             </div>
           </div>
         </div>
-        <div className="fund">
-          {`Available funds = ${tokenIn.balance} ${tokenIn.symbol}`}
-        </div>
-        <div className="rate">
-          {`1 ${tokenIn.symbol} = ${(rate.rate * 10 ** (-rate.decimals))} ${tokenOut.symbol}`}
+        <div className="fund row p-0">
+          <div className="col-6 p-0">
+            {`Available funds = ${tokenIn.balance} ${tokenIn.symbol}`}
+          </div>
+          <div className="col-6 p-0 contract-funds">
+            {`Contract funds = ${contractBalance} ${tokenOut.symbol}`}
+          </div>
+          <div className="col-6 p-0">
+            {`1 ${tokenIn.symbol} = ${(rate.rate * 10 ** (-rate.decimals))} ${tokenOut.symbol}`}
+          </div>
         </div>
         <button onClick={handleSubmit} className="btn-primary swap-button">
           SWAP
