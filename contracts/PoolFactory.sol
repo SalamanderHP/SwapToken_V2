@@ -24,6 +24,8 @@ contract PoolFactory is Initializable {
     string memory _tokenBSymbol,
     uint256 _salt
   ) public {
+    require(msg.sender == tx.origin, "Cannot create pool from contract");
+
     address payable swapContractAddress;
     bytes memory bytecode = type(SwapToken).creationCode;
 
