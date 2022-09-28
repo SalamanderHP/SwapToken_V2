@@ -5,7 +5,7 @@ import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "../contracts/SwapToken.sol";
 
 contract PoolFactory is Initializable {
-  event SwapContractCreate(address swapContractAddress, address token1Address, address token2Address);
+  event SwapContractCreate(address swapContractAddress, address contractOwner, address token1Address, address token2Address);
 
   address[] swapContracts;
 
@@ -47,6 +47,6 @@ contract PoolFactory is Initializable {
 
     swapContracts.push(swapContractAddress);
     poolOwner[msg.sender].push(swapContractAddress);
-    emit SwapContractCreate(address(0), _tokenAAddress, _tokenBAddress);
+    emit SwapContractCreate(swapContractAddress, msg.sender, _tokenAAddress, _tokenBAddress);
   }
 }
