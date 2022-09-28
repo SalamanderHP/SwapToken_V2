@@ -13,12 +13,36 @@ contract SwapToken is OwnableUpgradeable {
     uint32 decimals;
   }
 
+  struct Token {
+    address tokenAddress;
+    uint256 amount;
+    string name;
+    string symbol;
+  }
+
+  uint256 rate;
+  Token tokenA;
+  Token tokenB;
+
   mapping(address => mapping(address => Rate)) public tokenRate;
+  mapping(address => Token) public poolToken;
 
   event RateChange(address tokenIn, address tokenOut, uint256 _newRate, uint32 newRateDecimals);
   event Swap(address _tokenIn, address _tokenOut, uint256 _amountIn, uint256 _amountOut);
+  event Deposit(address tokenAddress, uint256 amount, address sender);
 
-  function initialize() public initializer {
+  function initialize(
+    address _tokenAAddress,
+    string memory _tokenAName,
+    string memory _tokenASymbol,
+    address _tokenBAddress,
+    string memory _tokenBName,
+    string memory _tokenBSymbol
+  ) public initializer {
+    tokenA = Token(_tokenAAddress, 0, _tokenAName, _tokenASymbol);
+    tokenB = Token(_tokenBAddress, 0, _tokenBName, _tokenBSymbol);
+    poolToken[_tokenAAddress] = tokenA;
+    poolToken[_tokenBAddress] = tokenB;
     __Ownable_init();
   }
 
@@ -33,9 +57,24 @@ contract SwapToken is OwnableUpgradeable {
     emit RateChange(_tokenIn, _tokenOut, _exchangeRate, _exchangeRateDecimals);
   }
 
+  function deposit(address _tokenAddress, uint256 _tokenAmount) external payable {
+    require(_tokenAddress == tokenA.tokenAddress || _tokenAddress == tokenB.tokenAddress, "Token in is not available in this pool");
+
+    if (_tokenAddress == address(0)) {
+      _handleDepositNative(_tokenAddress, _tokenAmount);
+      emit Deposit(_tokenAddress, _tokenAmount, msg.sender);
+      return;
+    }
+
+    _handleDepositToken(_tokenAddress, _tokenAmount);
+    emit Deposit(_tokenAddress, _tokenAmount, msg.sender);
+  }
+
   function swap(address _tokenIn, address _tokenOut, uint256 _amountIn) external payable {
     require(_tokenIn != _tokenOut, "Cannot transfer 2 token with same address");
     require(tokenRate[_tokenIn][_tokenOut].rate > 0, "The rate between this 2 tokens is unavailable");
+    require(_tokenIn == tokenA.tokenAddress || _tokenIn == tokenB.tokenAddress, "Token in is not available in this pool");
+    require(_tokenOut == tokenA.tokenAddress || _tokenOut == tokenB.tokenAddress, "Token out is not available in this pool");
 
     uint256 amountIn = msg.value;
     uint256 amountOut;
@@ -48,13 +87,44 @@ contract SwapToken is OwnableUpgradeable {
     _tokenSwap(_tokenIn, _tokenOut, amountIn, amountOut);
   }
 
-  function _tokenSwap(address _tokenIn, address _tokenOut, uint256 _amountIn, uint256 _amounOut) internal {
+  function _handleDepositNative(address _tokenAddress, uint256 tokenAmount) internal {
+    if (_tokenAddress == tokenA.tokenAddress) {
+      tokenA.amount = tokenA.amount + tokenAmount;
+      return;
+    }
+
+    tokenB.amount = tokenB.amount + tokenAmount;
+  }
+
+  function _handleDepositToken(address _tokenAddress, uint256 _tokenAmount) internal {
+    IERC20Upgradeable token = IERC20Upgradeable(_tokenAddress);
+    token.safeTransfer(address(this), _tokenAmount);
+
+    if (_tokenAddress == tokenA.tokenAddress) {
+      tokenA.amount = tokenA.amount + _tokenAmount;
+      return;
+    }
+
+    tokenB.amount = tokenB.amount + _tokenAmount;
+  }
+
+  function _tokenSwap(address _tokenIn, address _tokenOut, uint256 _amountIn, uint256 _amountOut) internal {
     require(_amountIn > 0, "Cannot swap token if token amount is equal to 0");
+    require(poolToken[_tokenOut].amount > _amountOut, "The amount of token out must be greater than pool balance");
 
     _handleTokenIn(_tokenIn, msg.sender, _amountIn);
-    _handleTokenOut(_tokenOut, msg.sender, _amounOut);
+    _handleTokenOut(_tokenOut, msg.sender, _amountOut);
 
-    emit Swap(_tokenIn, _tokenOut, _amountIn, _amounOut);
+    if (_tokenIn == tokenA.tokenAddress) {
+      tokenA.amount = tokenA.amount + _amountIn;
+      tokenB.amount = tokenB.amount - _amountOut;
+      emit Swap(_tokenIn, _tokenOut, _amountIn, _amountOut);
+      return;
+    }
+
+    tokenB.amount = tokenB.amount + _amountIn;
+    tokenA.amount = tokenA.amount - _amountOut;
+    emit Swap(_tokenIn, _tokenOut, _amountIn, _amountOut);
   }
 
   function _handleTokenIn(address _tokenIn, address _sender, uint256 _amountIn) private {

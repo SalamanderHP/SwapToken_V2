@@ -1,1 +1,1 @@
-module.exports = ["TokenB", "TKB", 10000];
+module.exports = ["TokenB", "TKB", 10000000];

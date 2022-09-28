@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const ALCHEMY_API_KEY = process.env.ALCHEMY_API_KEY;
 const ROPSTEN_PRIVATE_KEY = process.env.ROPSTEN_PRIVATE_KEY;
+const ROPSTEN_PRIVATE_KEY_2 = process.env.ROPSTEN_PRIVATE_KEY_2;
 
 // This is a sample Hardhat task. To learn how to create your own go to
 // https://hardhat.org/guides/create-task.html
@@ -33,8 +34,14 @@ module.exports = {
     },
     ropsten: {
       url: `https://eth-ropsten.alchemyapi.io/v2/${ALCHEMY_API_KEY}`,
-      accounts: [`${ROPSTEN_PRIVATE_KEY}`]
-    }
+      accounts: [`${ROPSTEN_PRIVATE_KEY}`, `${ROPSTEN_PRIVATE_KEY_2}`]
+    },
+    bsc_testnet: {
+      url: "https://data-seed-prebsc-1-s1.binance.org:8545",
+      chainId: 97,
+      gasPrice: 20000000000,
+      accounts: [`${ROPSTEN_PRIVATE_KEY}`, `${ROPSTEN_PRIVATE_KEY_2}`]
+    },
   },
   solidity: {
     version: "0.8.9"
