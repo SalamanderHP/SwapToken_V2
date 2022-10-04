@@ -11,10 +11,6 @@ contract PoolFactory is Initializable {
 
   mapping(address => address[]) poolOwner;
 
-  function initializable() public onlyInitializing {
-
-  }
-
   function createPool(
     uint256 _pool_id,
     address _tokenAAddress,
@@ -23,7 +19,7 @@ contract PoolFactory is Initializable {
     address _tokenBAddress,
     string memory _tokenBName,
     string memory _tokenBSymbol
-  ) external {
+  ) external returns (address) {
     require(msg.sender == tx.origin, "Cannot create pool from smart contract");
 
     address payable swapContractAddress;
@@ -60,5 +56,14 @@ contract PoolFactory is Initializable {
     pools.push(swapContractAddress);
     poolOwner[msg.sender].push(swapContractAddress);
     emit SwapContractCreate(swapContractAddress, msg.sender, _tokenAAddress, _tokenBAddress);
+    return swapContractAddress;
+  }
+
+  function initializable() public onlyInitializing {
+
+  }
+
+  function getPoolOwner() public view returns (address[] memory) {
+    return poolOwner[msg.sender];
   }
 }

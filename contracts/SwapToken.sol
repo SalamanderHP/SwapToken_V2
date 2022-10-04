@@ -61,6 +61,7 @@ contract SwapToken is OwnableUpgradeable {
     require(_tokenAddress == tokenA.tokenAddress || _tokenAddress == tokenB.tokenAddress, "Token in is not available in this pool");
 
     if (_tokenAddress == address(0)) {
+      require(msg.value == _tokenAmount, "Value must be greater than 0");
       _handleDepositNative(_tokenAddress, _tokenAmount);
       emit Deposit(_tokenAddress, _tokenAmount, msg.sender);
       return;
@@ -87,13 +88,13 @@ contract SwapToken is OwnableUpgradeable {
     _tokenSwap(_tokenIn, _tokenOut, amountIn, amountOut);
   }
 
-  function _handleDepositNative(address _tokenAddress, uint256 tokenAmount) internal {
+  function _handleDepositNative(address _tokenAddress, uint256 _tokenAmount) internal {
     if (_tokenAddress == tokenA.tokenAddress) {
-      tokenA.amount = tokenA.amount + tokenAmount;
+      tokenA.amount = tokenA.amount + _tokenAmount;
       return;
     }
 
-    tokenB.amount = tokenB.amount + tokenAmount;
+    tokenB.amount = tokenB.amount + _tokenAmount;
   }
 
   function _handleDepositToken(address _tokenAddress, uint256 _tokenAmount) internal {

@@ -1,0 +1,30 @@
+const Web3 = require("web3");
+const Web3 = require("Web3");
+const Web3 = require("hre");
+ factory = await PoolFactory.deployed()
+factory = new ethers.Contract().deployed("Factory")
+factory = new ethers.Contract("PoolFactory").deployed();
+factory = new ethers.Contract("PoolFactory", "0x0165878A594ca255338adfa4d48449f69242Eb8F").deployed();
+factory = new ethers.Contract("PoolFactory").deployed();
+let factory = ethers.Contract("PoolFactory").deployed();
+factory = accounts[0]
+factory = await ethers.deployed("PoolFactory")
+instance = await factory.deployed();
+let instance = await factory.deployed();
+let instance = await factory.at("0x0165878A594ca255338adfa4d48449f69242Eb8F");
+let factory = await ethers.getContractFactory("PoolFactory");
+await ethers.getSigner()
+await ethers.getSigner().signer
+await ethers.getSigner()
+await ethers.getSigner()[0]
+await ethers.getSigner().address
+await ethers.getSigner()
+ethers.getSigner()
+factoryInstance = await new ethers.Contract("0x0165878A594ca255338adfa4d48449f69242Eb8F");
+factoryInstance = await ethers.Contract("0x0165878A594ca255338adfa4d48449f69242Eb8F");
+factoryInstance = await new ethers.Contract("0x0165878A594ca255338adfa4d48449f69242Eb8F");
+let factoryInstance = await new ethers.Contract("0x0165878A594ca255338adfa4d48449f69242Eb8F");
+let factoryInstance = await new ethers.Contract
+exit
+hardhat compile
+compile
