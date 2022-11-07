@@ -6,7 +6,7 @@ import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeab
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
 interface IPoolFactory {
-  function owner() external view returns (address);
+  function getOwner() external view returns(address);
 }
 
 contract SwapToken is AccessControlUpgradeable {
@@ -37,7 +37,7 @@ contract SwapToken is AccessControlUpgradeable {
   event Swap(address _tokenIn, address _tokenOut, uint256 _amountIn, uint256 _amountOut);
   event Deposit(address tokenAddress, uint256 amount, address sender);
 
-  constructor() {
+  constructor() payable {
     factory = msg.sender;
   }
 
@@ -58,7 +58,7 @@ contract SwapToken is AccessControlUpgradeable {
     _setupRole(DEFAULT_ADMIN_ROLE, factory);
     _setupRole(
       DEFAULT_ADMIN_ROLE,
-      IPoolFactory(factory).owner()
+      IPoolFactory(factory).getOwner()
     );
   }
 

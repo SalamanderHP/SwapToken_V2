@@ -18,6 +18,10 @@ contract PoolFactory is Initializable, AccessControlUpgradeable {
     owner = msg.sender;
   }
 
+  function getOwner() external view returns(address) {
+    return owner;
+  }
+
   function createPool(
     uint256 _pool_id,
     address _tokenAAddress,
