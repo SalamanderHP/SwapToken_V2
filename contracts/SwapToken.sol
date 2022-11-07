@@ -1,12 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.9;
 
-import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 
-contract SwapToken is OwnableUpgradeable {
+interface IPoolFactory {
+  function owner() external view returns (address);
+}
+
+contract SwapToken is AccessControlUpgradeable {
   using SafeERC20Upgradeable for IERC20Upgradeable;
+
+  address public factory;
 
   struct Rate {
     uint256 rate;
@@ -31,6 +37,10 @@ contract SwapToken is OwnableUpgradeable {
   event Swap(address _tokenIn, address _tokenOut, uint256 _amountIn, uint256 _amountOut);
   event Deposit(address tokenAddress, uint256 amount, address sender);
 
+  constructor() {
+    factory = msg.sender;
+  }
+
   function initialize(
     address _tokenAAddress,
     string memory _tokenAName,
@@ -38,17 +48,23 @@ contract SwapToken is OwnableUpgradeable {
     address _tokenBAddress,
     string memory _tokenBName,
     string memory _tokenBSymbol
-  ) public initializer {
+  ) public {
+    require(msg.sender == factory, "UNAUTHORIZED: Caller is not factory contract");
+
     tokenA = Token(_tokenAAddress, 0, _tokenAName, _tokenASymbol);
     tokenB = Token(_tokenBAddress, 0, _tokenBName, _tokenBSymbol);
     poolToken[_tokenAAddress] = tokenA;
     poolToken[_tokenBAddress] = tokenB;
-    __Ownable_init();
+    _setupRole(DEFAULT_ADMIN_ROLE, factory);
+    _setupRole(
+      DEFAULT_ADMIN_ROLE,
+      IPoolFactory(factory).owner()
+    );
   }
 
   receive() external payable {}
 
-  function changeRate(address _tokenIn, address _tokenOut, uint256 _exchangeRate, uint32 _exchangeRateDecimals) external onlyOwner {
+  function changeRate(address _tokenIn, address _tokenOut, uint256 _exchangeRate, uint32 _exchangeRateDecimals) external onlyRole(DEFAULT_ADMIN_ROLE) {
     require(_exchangeRate > 0, "The rate between token and crypto must be greater than 0");
 
     tokenRate[_tokenIn][_tokenOut].rate = _exchangeRate;

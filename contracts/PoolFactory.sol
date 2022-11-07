@@ -2,14 +2,21 @@
 pragma solidity ^0.8.9;
 
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
+import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
 import "../contracts/SwapToken.sol";
 
-contract PoolFactory is Initializable {
+contract PoolFactory is Initializable, AccessControlUpgradeable {
   event SwapContractCreate(address swapContractAddress, address contractOwner, address token1Address, address token2Address);
 
   address[] pools;
+  address owner;
 
   mapping(address => address[]) poolOwner;
+
+  function initialize() external initializer {
+    _setupRole(DEFAULT_ADMIN_ROLE, msg.sender);
+    owner = msg.sender;
+  }
 
   function createPool(
     uint256 _pool_id,
