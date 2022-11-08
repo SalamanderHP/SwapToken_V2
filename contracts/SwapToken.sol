@@ -115,7 +115,7 @@ contract SwapToken is AccessControlUpgradeable {
 
   function _handleDepositToken(address _tokenAddress, uint256 _tokenAmount) internal {
     IERC20Upgradeable token = IERC20Upgradeable(_tokenAddress);
-    token.safeTransfer(address(this), _tokenAmount);
+    token.safeTransferFrom(msg.sender, address(this), _tokenAmount);
 
     if (_tokenAddress == tokenA.tokenAddress) {
       tokenA.amount = tokenA.amount + _tokenAmount;
