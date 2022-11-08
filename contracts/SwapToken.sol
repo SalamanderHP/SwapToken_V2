@@ -4,6 +4,7 @@ pragma solidity ^0.8.9;
 import "@openzeppelin/contracts-upgradeable/token/ERC20/IERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/token/ERC20/utils/SafeERC20Upgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/AccessControlUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/token/ERC20/ERC20Upgradeable.sol";
 
 interface IPoolFactory {
   function getOwner() external view returns(address);
@@ -26,9 +27,9 @@ contract SwapToken is AccessControlUpgradeable {
     string symbol;
   }
 
-  uint256 rate;
-  Token tokenA;
-  Token tokenB;
+  uint256 public rate;
+  Token public tokenA;
+  Token public tokenB;
 
   mapping(address => mapping(address => Rate)) public tokenRate;
   mapping(address => Token) public poolToken;
@@ -43,16 +44,14 @@ contract SwapToken is AccessControlUpgradeable {
 
   function initialize(
     address _tokenAAddress,
-    string memory _tokenAName,
-    string memory _tokenASymbol,
-    address _tokenBAddress,
-    string memory _tokenBName,
-    string memory _tokenBSymbol
+    address _tokenBAddress
   ) public initializer {
     require(msg.sender == factory, "UNAUTHORIZED: Caller is not factory contract");
 
-    tokenA = Token(_tokenAAddress, 0, _tokenAName, _tokenASymbol);
-    tokenB = Token(_tokenBAddress, 0, _tokenBName, _tokenBSymbol);
+    ERC20Upgradeable tokenAInstance = ERC20Upgradeable(_tokenAAddress);
+    ERC20Upgradeable tokenBInstance = ERC20Upgradeable(_tokenBAddress);
+    tokenA = Token(_tokenAAddress, 0, tokenAInstance.name(), tokenAInstance.symbol());
+    tokenB = Token(_tokenBAddress, 0, tokenBInstance.name(), tokenBInstance.symbol());
     poolToken[_tokenAAddress] = tokenA;
     poolToken[_tokenBAddress] = tokenB;
     _setupRole(DEFAULT_ADMIN_ROLE, factory);

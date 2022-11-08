@@ -25,11 +25,7 @@ contract PoolFactory is Initializable, AccessControlUpgradeable {
   function createPool(
     uint256 _pool_id,
     address _tokenAAddress,
-    string memory _tokenAName,
-    string memory _tokenASymbol,
-    address _tokenBAddress,
-    string memory _tokenBName,
-    string memory _tokenBSymbol
+    address _tokenBAddress
   ) external returns (address) {
     require(msg.sender == tx.origin, "Cannot create pool from smart contract");
 
@@ -57,11 +53,7 @@ contract PoolFactory is Initializable, AccessControlUpgradeable {
 
     SwapToken(swapContractAddress).initialize(
       _tokenAAddress,
-      _tokenAName,
-      _tokenASymbol,
-      _tokenBAddress,
-      _tokenBName,
-      _tokenBSymbol
+      _tokenBAddress
     );
 
     pools.push(swapContractAddress);
