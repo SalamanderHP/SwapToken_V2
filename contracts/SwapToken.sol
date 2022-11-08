@@ -48,7 +48,7 @@ contract SwapToken is AccessControlUpgradeable {
     address _tokenBAddress,
     string memory _tokenBName,
     string memory _tokenBSymbol
-  ) public {
+  ) public initializer {
     require(msg.sender == factory, "UNAUTHORIZED: Caller is not factory contract");
 
     tokenA = Token(_tokenAAddress, 0, _tokenAName, _tokenASymbol);
